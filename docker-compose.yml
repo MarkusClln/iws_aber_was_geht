@@ -1,0 +1,111 @@
+version: '2'
+
+networks:
+  webshop-net:
+    driver: bridge
+    
+services:
+  basket:
+    image: basketimage:latest
+    depends_on:
+      - "postgres_image"
+    build:
+      context: ./basket/basket
+      dockerfile: Dockerfile
+    ports:
+      - "3002:80"
+    environment:
+      DB_CONNECTION_STRING: "host=postgres_image;port=5432;database=basketdb;username=postgres;password=postgres"
+    networks:
+      - webshop-net
+  
+  postgres_image:
+    image: postgres:latest
+    ports:
+      - "5432"
+    restart: always
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "basketdb"
+    networks:
+      - webshop-net
+
+  marketing:
+    build: marketing/.
+    networks:
+      - webshop-net
+    depends_on:
+      - "mongodb"
+    ports:
+      - "3003:3000"
+    environment:
+      PORT: 3000
+      DB_IP: mongodb
+
+  mongodb:
+    image: mongo
+    ports:
+      - 27017:27017
+    networks:
+      - webshop-net
+    restart: always
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb
+    networks:
+      - webshop-net
+    depends_on:
+      - mongodb
+
+  payment:
+    build: payment/.
+    networks:
+      - webshop-net
+    depends_on:
+      - mongodb
+    ports:
+      - "3004:5000"
+    environment:
+      PORT: 5000
+      DB_IP: mongodb
+
+  products:
+    build: products/.
+    networks:
+      - webshop-net
+    depends_on:
+      - mongodb
+    ports:
+      - "3001:5000"
+    environment:
+      PORT: 5000
+      DB_IP: mongodb
+
+  api-gateway:
+    build: API-Gateway/.
+    networks:
+      - webshop-net
+    ports:
+      - "3005:3000"
+    environment:
+      MARKETING_IP: marketing
+      BASKET_IP: basket
+      PAYMENT_IP: payment
+      PRODUCT_IP: products
+
+  frontend:
+    build: frontend_working/Microservices.Webshop/Microservices.Webshop/.
+    networks:
+      - webshop-net
+    ports:
+      - "3006:80"
+
+volumes:
+  postgres_data:
+  mysql_data:
