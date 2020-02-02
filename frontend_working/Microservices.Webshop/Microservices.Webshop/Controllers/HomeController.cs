@@ -6,38 +6,34 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microservices.Webshop.Models;
+using Microservices.Webshop.Services;
+using Microservices.Webshop.ViewModels;
 
 namespace Microservices.Webshop.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private RestClient client;
 
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
+            client = new RestClient();
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var list = new List<Product>();
-            for (int i = 0; i < 10; i++)
-            {
-                list.Add(new Product
-                {
-                    ProductId = i,
-                    Name = "Produkt_" + i,
-                    Description = "Beschreibung_" + i,
-                    Price = i + "€"
-                });
-            }
+
+            //list = await client.GetAllProducts();
 
             return View(list);
         }
 
         public IActionResult ProductDetail(string name, string description, string price)
         {
-            return View(new Product(name, description, price));
+            return View(new Product(name, description, price, "",""));
         }
 
         public IActionResult Basket(bool clear = false)
@@ -82,6 +78,32 @@ namespace Microservices.Webshop.Controllers
         public IActionResult RemoveFromBasket(int productId)
         {
             return RedirectToAction("Basket", new { clear = true});
+        }
+
+        public IActionResult Checkout()
+        {
+            return View();
+        }
+
+        public IActionResult Administration()
+        {
+            return View(new AdministrationViewModel());
+        }
+
+        [HttpPost]
+        public IActionResult AddProduct(AdministrationViewModel viewModel)
+        {
+            Console.WriteLine(viewModel.ProductName);
+
+            return null;
+        }
+
+        [HttpPost]
+        public IActionResult AddCampaign(AdministrationViewModel viewModel)
+        {
+            Console.WriteLine(viewModel.ProductName);
+
+            return null;
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
