@@ -38,7 +38,7 @@ namespace Microservices.Webshop.Services
 
         public async Task<Basket> GetBasket(int customerId)
         {
-            var httpResponse = await client.GetAsync(BaseUrl +"basket/"+ customerId.ToString());
+            var httpResponse = await client.GetAsync(BaseUrl +"api/showBasket/"+ customerId.ToString());
 
             if (!httpResponse.IsSuccessStatusCode)
             {
@@ -82,16 +82,16 @@ namespace Microservices.Webshop.Services
             }
         }
 
-        //TODO: DELETE instead of POST
+        //TODO: DELETE instead of POST in BasketService
         public async Task ClearBasket(int customerId)
         {
             
-            //var httpResponse = await client.PostAsync(BaseUrl + "basket/clear/" + customerId.ToString());
+            var httpResponse = await client.DeleteAsync(BaseUrl + "basket/clear/" + customerId.ToString());
 
-            //if (!httpResponse.IsSuccessStatusCode)
-            //{
-            //    throw new Exception("Cannot add a todo task");
-            //}
+            if (!httpResponse.IsSuccessStatusCode)
+            {
+                throw new Exception("Cannot add a todo task");
+            }
         }
 
         public async Task<List<Order>> GetAllOrders(int customerId)
@@ -109,9 +109,13 @@ namespace Microservices.Webshop.Services
             return orderList;
         }
 
-        public void RemoveBasketItem()
+        public async Task RemoveBasketItem(int itemId)
         {
-
+            var httpResponse = await client.PostAsync(BaseUrl + "basket/remove/" + itemId.ToString(), null);
+            if (!httpResponse.IsSuccessStatusCode)
+            {
+                throw new Exception("Cannot retrieve tasks");
+            }
         }
     }
 }

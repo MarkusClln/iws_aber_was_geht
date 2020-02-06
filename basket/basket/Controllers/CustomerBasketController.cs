@@ -85,11 +85,12 @@ namespace basket.Controllers
         }
 
         // DELETE: /clear/1
-        [HttpPost("clear/{customerId}")]
+        [HttpDelete("clear/{customerId}")]
         public async Task<ActionResult<CustomerBasket>> ClearCustomerBasket(int customerId)
         {
             await _context.Database.MigrateAsync();
 
+            //Get basket
             var customerBasket = await _context.Baskets.Include(b => b.Items).FirstOrDefaultAsync(b => b.CustomerId == customerId);
 
             if (customerBasket == null)

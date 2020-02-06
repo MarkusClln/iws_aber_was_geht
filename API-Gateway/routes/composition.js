@@ -19,7 +19,60 @@ const paymentURL= "http://" +process.env.PAYMENT_IP + ":" + config.Nodes.payment
 router.post('/checkout', async function(req, res, next){
     res.setHeader("Content-Type", "application/json");
 
-    //TODO
+    const basketOptions = {
+        method: 'GET',
+        uri: basketURL + "/" + req.params.customerId
+    };
+
+    //GET basket by customerId
+    var customerBasket = await requestPromise(basketOptions)
+        .then(function (response) {
+            return JSON.parse(response);
+        });
+
+    var fullPrice = 0;
+
+    //Iterate over all items in basket
+    for (var i = 0; i < customerBasket.Items.length; i++) {
+        var item = customerBasket.Items[i];
+
+        const productOptions = {
+            method: 'GET',
+            uri: productURL + "/" + item.productId
+        };
+        //GET product by id
+        var product = await requestPromise(productOptions)
+            .then(function (response) {
+                return JSON.parse(response);
+            });
+
+        //discount
+        var discount = getDiscountByProductId(item.productId);
+
+        customerBasket.Items[i].productDiscount = discount;
+        customerBasket.Items[i].productName = product.productName;
+        customerBasket.Items[i].productDescription = product.productDescription;
+        customerBasket.Items[i].productPrice = product.productPrice;
+        customerBasket.Items[i].productQuantity = product.productQuantity;
+
+        fullPrice += (product.productPrice - discount);
+    }
+
+    const paymentOptions = {
+        method: 'POST',
+        uri: paymentURL + "/",
+        body: {
+            items = customerBasket.Items,
+            billNumber = "123456789",
+            customerId = req.params.customerId,
+            price = fullPrice
+        }
+    };
+
+    await requestPromise.post(paymentOptions)
+        .then(function (response) {
+            return response;
+        });
 });
 
 
@@ -60,6 +113,10 @@ router.get('/showBasket/:customerId', async function(req, res, next){
         //discount
         var discount = getDiscountByProductId(item.productId);
         customerBasket.Items[i].productDiscount = discount;
+        customerBasket.Items[i].productName = product.productName;
+        customerBasket.Items[i].productDescription = product.productDescription;
+        customerBasket.Items[i].productPrice = product.productPrice;
+        customerBasket.Items[i].productQuantity = product.productQuantity;
     }
     res.send(customerBasket);
 });
