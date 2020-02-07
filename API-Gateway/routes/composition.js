@@ -16,7 +16,7 @@ const paymentURL= "http://" +process.env.PAYMENT_IP + ":" + config.Nodes.payment
 //Checkout: GET /basket/<customerId> + GET /product/<productId> + POST /payment
 //????Produkt abfragen: GET /product/<productId> + GET /marketing/<productId>????
 
-router.post('/checkout', async function(req, res, next){
+router.post('/checkout/:customerId', async function(req, res, next){
     res.setHeader("Content-Type", "application/json");
 
     const basketOptions = {
@@ -33,8 +33,8 @@ router.post('/checkout', async function(req, res, next){
     var fullPrice = 0;
 
     //Iterate over all items in basket
-    for (var i = 0; i < customerBasket.Items.length; i++) {
-        var item = customerBasket.Items[i];
+    for (var i = 0; i < customerBasket.items.length; i++) {
+        var item = customerBasket.items[i];
 
         const productOptions = {
             method: 'GET',
@@ -47,34 +47,56 @@ router.post('/checkout', async function(req, res, next){
             });
 
         //discount
-        var discount = getDiscountByProductId(item.productId);
-
-        customerBasket.Items[i].productDiscount = discount;
-        customerBasket.Items[i].productName = product.productName;
-        customerBasket.Items[i].productDescription = product.productDescription;
-        customerBasket.Items[i].productPrice = product.productPrice;
-        customerBasket.Items[i].productQuantity = product.productQuantity;
+        const marketingOptions = {
+            method: 'GET',
+            uri: marketingURL + "/" + product.productId
+        };
+        var discount = 0;
+        //Get marketingcampaigns by productid
+        await requestPromise(marketingOptions)
+            .then(function (response){
+                var marketing = JSON.parse(response);
+                for (var j = 0; j < marketing.length; j++) {
+                    //check if discount of response is higher then current saved discount
+                    if(discount < Number(marketing[j].productDiscount)){
+                        discount = Number(marketing[j].productDiscount);
+                    }
+                }
+            });
 
         fullPrice += (product.productPrice - discount);
     }
 
+
+    for (var j = 0; j < customerBasket.items.length; j++) {
+        delete customerBasket.items[j].customerBasketId;
+    }
+
+
     const paymentOptions = {
         method: 'POST',
         uri: paymentURL + "/",
+        headers: {
+            'Content-Type': 'application/json; charset=utf-8'
+        },
+        json: true,
         body: {
-            items = customerBasket.Items,
-            billNumber = "123456789",
-            customerId = req.params.customerId,
-            price = fullPrice
+            items : customerBasket.items,
+            billNumber : Math.floor(Math.random() * Math.floor(9999999)),
+            customerId : parseInt(req.params.customerId),
+            price : fullPrice
         }
     };
+
 
     await requestPromise.post(paymentOptions)
         .then(function (response) {
             return response;
         });
-});
 
+
+    res.send("Created payment");
+});
 
 
 router.get('/showBasket/:customerId', async function(req, res, next){
@@ -86,14 +108,16 @@ router.get('/showBasket/:customerId', async function(req, res, next){
     };
 
     //GET basket by customerId
-    var customerBasket = await requestPromise(basketOptions)
+    const customerBasket = await requestPromise(basketOptions)
         .then(function(response){
             return JSON.parse(response);
         });
 
     //Iterate over all items in basket
-    for(var i = 0; i<customerBasket.Items.length; i++){
-        var item = customerBasket.Items[i];
+    var returnValue = customerBasket;
+
+    for(var i = 0; i<customerBasket.items.length; i++){
+        var item = customerBasket.items[i];
 
         const productOptions = {
             method: 'GET',
@@ -111,14 +135,33 @@ router.get('/showBasket/:customerId', async function(req, res, next){
             // };
 
         //discount
-        var discount = getDiscountByProductId(item.productId);
-        customerBasket.Items[i].productDiscount = discount;
-        customerBasket.Items[i].productName = product.productName;
-        customerBasket.Items[i].productDescription = product.productDescription;
-        customerBasket.Items[i].productPrice = product.productPrice;
-        customerBasket.Items[i].productQuantity = product.productQuantity;
+
+        const marketingOptions = {
+            method: 'GET',
+            uri: marketingURL + "/" + product.productId
+        };
+
+        var discount = 0;
+        //Get marketingcampaigns by productid
+        await requestPromise(marketingOptions)
+            .then(function (response){
+                var marketing = JSON.parse(response);
+                for (var j = 0; j < marketing.length; j++) {
+                    //check if discount of response is higher then current saved discount
+                    if(discount < Number(marketing[j].productDiscount)){
+                        discount = Number(marketing[j].productDiscount);
+                    }
+                }
+            });
+
+
+        returnValue.items[i].productDiscount = discount;
+        returnValue.items[i].productName = product.productName;
+        returnValue.items[i].productDescription = product.productDescription;
+        returnValue.items[i].productPrice = product.productPrice;
+        returnValue.items[i].productQuantity = product.productQuantity;
     }
-    res.send(customerBasket);
+    res.send(returnValue);
 });
 
 //Get-Request der alle Produkte samt Discount zurückgibt
@@ -172,27 +215,90 @@ router.get('/allProducts', async function(req, res, next) {
 
 });
 
-function getDiscountByProductId(productId){
-    const marketingOptions = {
-        method: 'GET',
-        uri: "http://" + marketingURL + "/" + productId
+
+router.get("/seedData", async function (req, res, next) {
+
+    const productOptions = {
+        method: 'POST',
+        uri: productURL + "/",
+        headers: {
+            'Content-Type': 'application/json; charset=utf-8'
+        },
+        json: true,
+        body: {
+            productId: 1,
+            productName: "Apfel",
+            productDescription: "Vom Apfelbaum",
+            productPrice: 20,
+            productQuantity: 5
+        }
     };
 
-    var discount = 0;
-    //Get marketingcampaigns by productid
-    await requestPromise(marketingOptions)
-    .then(function (response){
-        var marketing = JSON.parse(response);
-        for (var j = 0; j < marketing.length; j++) {
-            //check if discount of response is higher then current saved discount
-            if(discount < Number(marketing[j].productDiscount)){
-                discount = Number(marketing[j].productDiscount);
-            }
-        }
-        
-        return discount;
-    });
-}
+    await requestPromise.post(productOptions)
+        .then(function (response) {
+           console.log(response);
+        });
 
+
+    productOptions.body = {
+        productId: 2,
+        productName: "Kartoffel",
+        productDescription: "Ausm Dreck",
+        productPrice: 40,
+        productQuantity: 7
+    };
+
+
+    await requestPromise.post(productOptions)
+        .then(function (response) {
+            console.log(response);
+        });
+
+       productOptions.body = {
+           productId: 3,
+           productName: "Birne",
+           productDescription: "Ausm Italien",
+           productPrice: 5,
+           productQuantity: 46
+       };
+
+    await requestPromise.post(productOptions)
+           .then(function (response) {
+               console.log(response);
+           });
+
+
+       const marketingOptions = {
+           method: 'POST',
+           uri: marketingURL + "/",
+           headers: {
+               'Content-Type': 'application/json; charset=utf-8'
+           },
+           json: true,
+           body: {
+               marketingId: 1,
+               productId: 1,
+               productDiscount: 5
+           }
+       };
+
+    await requestPromise.post(marketingOptions)
+           .then(function (response) {
+               console.log(response);
+           });
+
+       marketingOptions.body = {
+           marketingId: 2,
+           productId: 3,
+           productDiscount: 1
+       };
+
+    await requestPromise.post(marketingOptions)
+           .then(function (response) {
+               console.log(response);
+           });
+
+   res.send("Created Data")
+});
 
 module.exports = router;

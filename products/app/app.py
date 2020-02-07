@@ -2,6 +2,7 @@ from flask import Flask, request, Response
 import pymongo
 from bson.json_util import dumps
 import os
+import json
 
 app = Flask(__name__)
 DB_IP = os.getenv('DB_IP')
@@ -25,7 +26,7 @@ def product():
 @app.route('/<id>', methods=['GET'])
 def getId(id):
     if request.method == 'GET':
-        js = dumps(mycol.find({"productId": int(id)}))
+        js = dumps(mycol.find_one({"productId": int(id)}))
         resp = Response(js, status=200, mimetype='application/json')
         return resp
 

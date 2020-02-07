@@ -24,7 +24,7 @@ def payment():
 @app.route('/<id>', methods=['GET'])
 def getId(id):
     if request.method == 'GET':
-        js = dumps(mycol.find({"customerId": int(id)}))
+        js = dumps(mycol.find_one({"customerId": int(id)}))
         resp = Response(js, status=200, mimetype='application/json')
         return resp
 
