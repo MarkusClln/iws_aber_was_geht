@@ -13,44 +13,68 @@
         <tbody>
             <tr>
                 <td colspan="1">
-                    <form class="well form-horizontal" asp-controller="Home" asp-action="AddProduct" method="post">
-                        <h2>Produkt hinzufügen</h2>
-                        <fieldset>
-                            <div class="form-group">
-                                <label class="col-md-4 control-label">Produktname</label>
-                                <div class="col-md-8 inputGroupContainer">
-                                    <div class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-p"></i></span><input asp-for="ProductName" /></div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <form asp-controller="Home" asp-action="AddProduct" method="post">
+
+                                <h2>Produkt hinzufügen</h2>
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                @*<input type="hidden" asp-for="Id" />*@
+                                <div class="form-group">
+                                    <label asp-for="ProductId" class="control-label"></label>
+                                    <input asp-for="ProductId" class="form-control" />
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-md-4 control-label">Produktbeschreibung</label>
-                                <div class="col-md-8 inputGroupContainer">
-                                    <div class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span><input asp-for="ProductDescription" /></div>
+                                <div class="form-group">
+                                    <label asp-for="ProductName" class="control-label"></label>
+                                    <input asp-for="ProductName" class="form-control" />
                                 </div>
-                            </div>
-                        </fieldset>
-                        <button type="submit">Erstellen</button>
-                    </form>
+                                <div class="form-group">
+                                    <label asp-for="ProductDescription" class="control-label"></label>
+                                    <input asp-for="ProductDescription" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="ProductPrice" class="control-label"></label>
+                                    <input asp-for="ProductPrice" class="form-control" />
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="ProductQuantity" class="control-label"></label>
+                                    <input asp-for="ProductQuantity" class="form-control" />
+                                </div>
+
+                                <div class="form-group">
+                                    <input type="submit" value="Save" class="btn btn-primary" />
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+
                 </td>
                 <td colspan="1">
-                    <form class="well form-horizontal" asp-controller="Home" asp-action="AddCampaign" method="post">
-                        <h2>Werbeaktion hinzufügen</h2>
-                        <fieldset>
-                            <div class="form-group">
-                                <label class="col-md-4 control-label">ProduktId</label>
-                                <div class="col-md-8 inputGroupContainer">
-                                    <div class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-p"></i></span><input asp-for="MarketingProductId" /></div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <form asp-controller="Home" asp-action="AddCampaign" method="post">
+
+                                <h2>Produkt hinzufügen</h2>
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                @*<input type="hidden" asp-for="Id" />*@
+                                <div class="form-group">
+                                    <label asp-for="MarketingProductId" class="control-label"></label>
+                                    <input asp-for="MarketingProductId" class="form-control" />
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-md-4 control-label">Rabatt</label>
-                                <div class="col-md-8 inputGroupContainer">
-                                    <div class="input-group"><span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span><input asp-for="MarketingDiscount" /></div>
+                                <div class="form-group">
+                                    <label asp-for="MarketingDiscount" class="control-label"></label>
+                                    <input asp-for="MarketingDiscount" class="form-control" />
                                 </div>
-                            </div>
-                        </fieldset>
-                        <button type="submit">Erstellen</button>
-                    </form>
+                                <div class="form-group">
+                                    <input type="submit" value="Save" class="btn btn-primary" />
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+
                 </td>
             </tr>
         </tbody>

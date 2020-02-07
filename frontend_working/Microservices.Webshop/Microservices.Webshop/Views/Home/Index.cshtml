@@ -12,10 +12,10 @@
             <div class="row">
                 @foreach (var item in Model)
                 {
-                    @Html.Hidden(item.Name);
+                    @Html.Hidden(item.ProductName);
 
                     <div class="col-lg-3 col-md-6 mb-4" id="card-template">
-                        <a class="card" asp-controller="Home" asp-action="ProductDetail" asp-route-name="@item.Name" asp-route-description="@item.Description" asp-route-price="@item.Price">
+                        <a class="card" asp-controller="Home" asp-action="ProductDetail" asp-route-name="@item.ProductName" asp-route-description="@item.ProductDescription" asp-route-price="@item.ProductPrice" asp-route-productId="@item.ProductId">
                             <!--Card image-->
                             <div class="view overlay">
                                 <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Vertical/12.jpg" class="card-img-top"
@@ -28,14 +28,14 @@
                             <!--Card content-->
                             <div class="card-body text-center">
                                 <!--Category & Title-->
-                                <h5>@item.Name</h5>
+                                <h5>@item.ProductName</h5>
                                 <h5>
                                     <strong>
-                                        @item.Description
+                                        @item.ProductDescription
                                     </strong>
                                 </h5>
                                 <h4 class="font-weight-bold blue-text">
-                                    <strong>@item.Price</strong>
+                                    <strong>@item.ProductPrice</strong>
                                 </h4>
                             </div>
                             <!--Card content-->

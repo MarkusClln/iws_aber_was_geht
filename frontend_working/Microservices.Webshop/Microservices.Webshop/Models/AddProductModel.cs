@@ -5,16 +5,12 @@ using System.Threading.Tasks;
 
 namespace Microservices.Webshop.Models
 {
-    public class Item
+    public class AddProductModel
     {
-        public int Id { get; set; }
-        public int CustomerBasketId { get; set; }
         public int ProductId { get; set; }
-        public int Count { get; set; }
         public string ProductName { get; set; }
         public string ProductDescription { get; set; }
         public int ProductPrice { get; set; }
-        public string ProductQuantity { get; set; }
-        public int ProductDiscount { get; set; }
+        public int ProductQuantity { get; set; }
     }
 }

@@ -13,12 +13,14 @@ namespace Microservices.Webshop.Services
     {
         public HttpClient client;
         public string BaseUrl = "http://localhost:3005/";
+        public int CustomerId = 1;
 
         public RestClient()
         {
             client = new HttpClient();
         }
 
+        //DONE
         public async Task<List<Product>> GetAllProducts()
         {
             var list = new List<Product>();
@@ -36,9 +38,10 @@ namespace Microservices.Webshop.Services
             return list;
         }
 
-        public async Task<Basket> GetBasket(int customerId)
+        //DONE
+        public async Task<Basket> GetBasket()
         {
-            var httpResponse = await client.GetAsync(BaseUrl +"api/showBasket/"+ customerId.ToString());
+            var httpResponse = await client.GetAsync(BaseUrl +"api/showBasket/"+ CustomerId);
 
             if (!httpResponse.IsSuccessStatusCode)
             {
@@ -51,11 +54,17 @@ namespace Microservices.Webshop.Services
             return basket;
         }
 
-        public void CheckoutBasket()
+        //DONE
+        public async Task CheckoutBasket()
         {
-
+            var httpResponse = await client.PostAsync(BaseUrl + "api/checkout/" + CustomerId, new StringContent("", Encoding.Default, "application/json"));
+            if (!httpResponse.IsSuccessStatusCode)
+            {
+                throw new Exception("Cannot add a todo task");
+            }
         }
 
+        //DONE
         public async Task<Product> GetProduct(int productId)
         {
             var httpResponse = await client.GetAsync(BaseUrl + "product/" + productId.ToString());
@@ -71,10 +80,11 @@ namespace Microservices.Webshop.Services
             return product;
         }
 
-        public async Task AddToBasket(Item product, int customerId)
+        //DONE
+        public async Task AddToBasket(AddToBasketItem product)
         {
             var content = JsonConvert.SerializeObject(product);
-            var httpResponse = await client.PostAsync(BaseUrl + customerId.ToString(), new StringContent(content, Encoding.Default, "application/json"));
+            var httpResponse = await client.PostAsync(BaseUrl + "basket/" + CustomerId, new StringContent(content, Encoding.Default, "application/json"));
 
             if (!httpResponse.IsSuccessStatusCode)
             {
@@ -82,11 +92,11 @@ namespace Microservices.Webshop.Services
             }
         }
 
-        //TODO: DELETE instead of POST in BasketService
-        public async Task ClearBasket(int customerId)
+        //DONE
+        public async Task ClearBasket()
         {
             
-            var httpResponse = await client.DeleteAsync(BaseUrl + "basket/clear/" + customerId.ToString());
+            var httpResponse = await client.DeleteAsync(BaseUrl + "basket/clear/" + CustomerId);
 
             if (!httpResponse.IsSuccessStatusCode)
             {
@@ -94,9 +104,31 @@ namespace Microservices.Webshop.Services
             }
         }
 
-        public async Task<List<Order>> GetAllOrders(int customerId)
+        public async Task AddProduct(AddProductModel model)
         {
-            var httpResponse = await client.GetAsync(BaseUrl + "payment/" + customerId.ToString());
+            var content = JsonConvert.SerializeObject(model);
+            var httpResponse = await client.PostAsync(BaseUrl + "product/", new StringContent(content, Encoding.Default, "application/json"));
+
+            if (!httpResponse.IsSuccessStatusCode)
+            {
+                throw new Exception("Cannot add a todo task");
+            }
+        }
+
+        public async Task AddCampaign(AddCampaignModel model)
+        {
+            var content = JsonConvert.SerializeObject(model);
+            var httpResponse = await client.PostAsync(BaseUrl + "marketing/", new StringContent(content, Encoding.Default, "application/json"));
+
+            if (!httpResponse.IsSuccessStatusCode)
+            {
+                throw new Exception("Cannot add a todo task");
+            }
+        }
+
+        public async Task<List<Order>> GetAllOrders()
+        {
+            var httpResponse = await client.GetAsync(BaseUrl + "payment/" + CustomerId);
 
             if (!httpResponse.IsSuccessStatusCode)
             {
@@ -109,13 +141,5 @@ namespace Microservices.Webshop.Services
             return orderList;
         }
 
-        public async Task RemoveBasketItem(int itemId)
-        {
-            var httpResponse = await client.PostAsync(BaseUrl + "basket/remove/" + itemId.ToString(), null);
-            if (!httpResponse.IsSuccessStatusCode)
-            {
-                throw new Exception("Cannot retrieve tasks");
-            }
-        }
     }
 }

@@ -26,63 +26,46 @@ namespace Microservices.Webshop.Controllers
         {
             var list = new List<Product>();
 
-            //list = await client.GetAllProducts();
+            list = await client.GetAllProducts();
 
             return View(list);
         }
 
-        public IActionResult ProductDetail(string name, string description, string price)
+        public IActionResult ProductDetail(string name, string description, int price, int productId)
         {
-            return View(new Product(name, description, price, "",""));
+            return View(new Product(productId, name, description, price, "",0));
         }
 
-        public IActionResult Basket(bool clear = false)
+        public async Task<IActionResult> Basket()
         {
-            var list = new List<Product>();
+            var basket = await client.GetBasket();
 
-            if (clear)
-            {
-                for (int i = 0; i < 3; i++)
-                {
-                    list.Add(new Product
-                    {
-                        ProductId = i,
-                        Name = "Produkt_" + i,
-                        Description = "Beschreibung_" + i,
-                        Price = i + "€"
-                    });
-                }
-            }
-            else
-            {
-                for (int i = 0; i < 4; i++)
-                {
-                    list.Add(new Product
-                    {
-                        ProductId = i,
-                        Name = "Produkt_" + i,
-                        Description = "Beschreibung_" + i,
-                        Price = i + "€"
-                    });
-                }
-            }
-
-            return View(list);
+            return View(basket);
         }
 
-        public IActionResult AddToBasket()
+        public async Task<IActionResult> AddToBasket(int productId)
         {
+            await client.AddToBasket(new AddToBasketItem {count = 1, productId = productId });
+
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> RemoveFromBasket(int productId)
+        {
+            //await client.//RemoveBasketItem(productId);
             return RedirectToAction("Basket");
         }
 
-        public IActionResult RemoveFromBasket(int productId)
+        public async Task<IActionResult> ClearBasket()
         {
-            return RedirectToAction("Basket", new { clear = true});
+            await client.ClearBasket();
+            return RedirectToAction("Basket");
         }
 
-        public IActionResult Checkout()
+        public async Task<IActionResult> Checkout()
         {
-            return View();
+            await client.CheckoutBasket();
+            return RedirectToAction("Basket");
         }
 
         public IActionResult Administration()
@@ -91,19 +74,26 @@ namespace Microservices.Webshop.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddProduct(AdministrationViewModel viewModel)
+        public async Task<IActionResult> AddProduct(AdministrationViewModel viewModel)
         {
-            Console.WriteLine(viewModel.ProductName);
-
-            return null;
+            await client.AddProduct(new AddProductModel { ProductId = viewModel.ProductId, 
+                ProductName = viewModel.ProductName, 
+                ProductDescription = viewModel.ProductDescription, 
+                ProductPrice = viewModel.ProductPrice, 
+                ProductQuantity = viewModel.ProductQuantity});
+            return RedirectToAction("Administration");
         }
 
         [HttpPost]
-        public IActionResult AddCampaign(AdministrationViewModel viewModel)
+        public async Task<IActionResult> AddCampaign(AdministrationViewModel viewModel)
         {
-            Console.WriteLine(viewModel.ProductName);
-
-            return null;
+            await client.AddCampaign(new AddCampaignModel
+            {
+                MarketingDiscount = viewModel.MarketingDiscount,
+                MarketingProductId = viewModel.MarketingProductId,
+                
+            });
+            return RedirectToAction("Administration");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

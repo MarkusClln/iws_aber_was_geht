@@ -115,10 +115,10 @@ router.get('/showBasket/:customerId', async function(req, res, next){
 
     //Iterate over all items in basket
     var returnValue = customerBasket;
-
+    console.log(customerBasket);
     for(var i = 0; i<customerBasket.items.length; i++){
         var item = customerBasket.items[i];
-
+        console.log(item);
         const productOptions = {
             method: 'GET',
             uri: productURL + "/" + item.productId
@@ -135,7 +135,7 @@ router.get('/showBasket/:customerId', async function(req, res, next){
             // };
 
         //discount
-
+        console.log(product);
         const marketingOptions = {
             method: 'GET',
             uri: marketingURL + "/" + product.productId

@@ -10,9 +10,11 @@ namespace Microservices.Webshop.ViewModels
         public AdministrationViewModel() { }
         public string ProductName { get; set; }
         public string ProductDescription { get; set; }
-        public string ProductPrice { get; set; }
+        public int ProductPrice { get; set; }
+        public int ProductId { get; set; }
+        public int ProductQuantity { get; set; }
 
-        public string MarketingProductId { get; set; }
-        public string MarketingDiscount { get; set; }
+        public int MarketingProductId { get; set; }
+        public int MarketingDiscount { get; set; }
     }
 }
