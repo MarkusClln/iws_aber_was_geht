@@ -5,7 +5,7 @@
 }
 <section class="jumbotron text-center">
     <div class="container">
-        <h1 class="jumbotron-heading">E-COMMERCE CART</h1>
+        <h1 class="jumbotron-heading">KAUF ALLES!</h1>
     </div>
 </section>
 
@@ -16,7 +16,6 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th scope="col"> </th>
                             <th scope="col">Name</th>
                             <th scope="col">Beschreibung</th>
                             <th scope="col" class="text-center">Preis</th>
@@ -31,7 +30,6 @@
                         {
                             price += ((item.ProductPrice - item.ProductDiscount) * item.Count);
                         <tr>
-                            <td><img src="https://dummyimage.com/50x50/55595c/fff" /> </td>
                             <td>@item.ProductName</td>
                             <td>@item.ProductDescription</td>
                             <td class="text-center">@item.ProductPrice €</td>
@@ -56,10 +54,10 @@
         <div class="col mb-2">
             <div class="row">
                 <div class="col-sm-12  col-md-6">
-                    <a class="add-to-cart btn btn-lg btn-block btn-success text-uppercase" asp-controller="Home" asp-action="ClearBasket">Clear</a>
+                    <a class="add-to-cart btn btn-lg btn-block btn-success text-uppercase" asp-controller="Home" asp-action="ClearBasket">Leeren</a>
                 </div>
                 <div class="col-sm-12 col-md-6 text-right">
-                    <a class="add-to-cart btn btn-lg btn-block btn-success text-uppercase" asp-controller="Home" asp-action="Checkout">Checkout</a>
+                    <a class="add-to-cart btn btn-lg btn-block btn-success text-uppercase" asp-controller="Home" asp-action="Checkout">Kaufen</a>
                     
                 </div>
             </div>

@@ -4,12 +4,14 @@
     ViewData["Title"] = "Home Page";
 }
 
-<partial name="_SliderView.cshtml" />
 
 <div class="container">
     <div class="container-fluid">
         <div class="container">
             <div class="row">
+                @{ 
+                    var picNum = 240;
+                }
                 @foreach (var item in Model)
                 {
                     @Html.Hidden(item.ProductName);
@@ -18,8 +20,9 @@
                         <a class="card" asp-controller="Home" asp-action="ProductDetail" asp-route-name="@item.ProductName" asp-route-description="@item.ProductDescription" asp-route-price="@item.ProductPrice" asp-route-productId="@item.ProductId">
                             <!--Card image-->
                             <div class="view overlay">
-                                <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Vertical/12.jpg" class="card-img-top"
-                                     alt="">
+                                @*<img src="~/sell-product.png" class="card-img-top"
+        alt="">*@
+                                <img src="http://placekitten.com/400/256" />
                                 <a href="product-page.html">
                                     <div class="mask rgba-white-slight"></div>
                                 </a>
@@ -35,8 +38,15 @@
                                     </strong>
                                 </h5>
                                 <h4 class="font-weight-bold blue-text">
-                                    <strong>@item.ProductPrice</strong>
+                                    <strong>@item.ProductPrice €</strong>
                                 </h4>
+                                @if (item.ProductDiscount != 0)
+                                {
+                                    <h4 class="font-weight-bold">
+                                        <strong style="color:red;">- @item.ProductDiscount €</strong>
+                                    </h4>
+                                }
+
                             </div>
                             <!--Card content-->
                         </a>

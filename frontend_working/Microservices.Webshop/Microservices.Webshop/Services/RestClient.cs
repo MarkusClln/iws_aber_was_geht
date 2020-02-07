@@ -104,31 +104,11 @@ namespace Microservices.Webshop.Services
             }
         }
 
-        public async Task AddProduct(AddProductModel model)
-        {
-            var content = JsonConvert.SerializeObject(model);
-            var httpResponse = await client.PostAsync(BaseUrl + "product/", new StringContent(content, Encoding.Default, "application/json"));
 
-            if (!httpResponse.IsSuccessStatusCode)
-            {
-                throw new Exception("Cannot add a todo task");
-            }
-        }
-
-        public async Task AddCampaign(AddCampaignModel model)
-        {
-            var content = JsonConvert.SerializeObject(model);
-            var httpResponse = await client.PostAsync(BaseUrl + "marketing/", new StringContent(content, Encoding.Default, "application/json"));
-
-            if (!httpResponse.IsSuccessStatusCode)
-            {
-                throw new Exception("Cannot add a todo task");
-            }
-        }
 
         public async Task<List<Order>> GetAllOrders()
         {
-            var httpResponse = await client.GetAsync(BaseUrl + "payment/" + CustomerId);
+            var httpResponse = await client.GetAsync(BaseUrl + "payment/");
 
             if (!httpResponse.IsSuccessStatusCode)
             {

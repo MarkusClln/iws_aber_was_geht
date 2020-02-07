@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microservices.Webshop.Models;
 using Microservices.Webshop.Services;
-using Microservices.Webshop.ViewModels;
+
 
 namespace Microservices.Webshop.Controllers
 {
@@ -43,6 +43,14 @@ namespace Microservices.Webshop.Controllers
             return View(basket);
         }
 
+        public async Task<IActionResult> Orders()
+        {
+            var orders = await client.GetAllOrders();
+
+            return View(orders);
+        }
+
+
         public async Task<IActionResult> AddToBasket(int productId)
         {
             await client.AddToBasket(new AddToBasketItem {count = 1, productId = productId });
@@ -66,34 +74,6 @@ namespace Microservices.Webshop.Controllers
         {
             await client.CheckoutBasket();
             return RedirectToAction("Basket");
-        }
-
-        public IActionResult Administration()
-        {
-            return View(new AdministrationViewModel());
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> AddProduct(AdministrationViewModel viewModel)
-        {
-            await client.AddProduct(new AddProductModel { ProductId = viewModel.ProductId, 
-                ProductName = viewModel.ProductName, 
-                ProductDescription = viewModel.ProductDescription, 
-                ProductPrice = viewModel.ProductPrice, 
-                ProductQuantity = viewModel.ProductQuantity});
-            return RedirectToAction("Administration");
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> AddCampaign(AdministrationViewModel viewModel)
-        {
-            await client.AddCampaign(new AddCampaignModel
-            {
-                MarketingDiscount = viewModel.MarketingDiscount,
-                MarketingProductId = viewModel.MarketingProductId,
-                
-            });
-            return RedirectToAction("Administration");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
