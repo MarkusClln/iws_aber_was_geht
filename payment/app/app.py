@@ -14,6 +14,18 @@ mycol = mydb["payments"]
 @app.route('/', methods=['GET', 'POST'])
 def payment():
     if request.method == 'POST':
+
+        req_data = request.get_json()
+
+        if 'items' not in req_data:
+            return "items is missing"
+        if 'billNumber' not in req_data:
+            return "billNumber is missing"
+        if 'customerId' not in req_data:
+            return "customerId is missing"
+        if 'price' not in req_data:
+            return "price is missing"
+
         mycol.insert_one(request.json)
         return "done"
     if request.method == 'GET':

@@ -3,8 +3,6 @@ import pymongo
 from bson.json_util import dumps
 import os
 import json
-from flask_marshmallow import Marshmallow
-from marshmallow import Schema, fields
 
 app = Flask(__name__)
 ma = Marshmallow(app)
@@ -15,35 +13,25 @@ mydb = myclient["productcatalog"]
 mycol = mydb["product"]
 
 
-class ProductSchema(Schema):
-    """ /api/note - POST
-
-    Parameters:
-     - productId (int)
-     - productName (str)
-     - productDescription (str)
-     - productPrice (int)
-     - productQuantity (int)
-    """
-    # the 'required' argument ensures the field exists
-    productId = fields.Int(required=True)
-    productName = fields.Str(required=True)
-    productDescription = fields.Str(required=True)
-    productPrice = fields.Int(required=True)
-    productQuantity = fields.Int(required=True)
-
-product_schema = ProductSchema()
-
-
 @app.route('/', methods=['GET', 'POST'])
 def product():
     if request.method == 'POST':
-        print(request.form)
-        errors = product_schema.validate(request.form)
-        if errors:
-            return "wrong request form"
+        req_data = request.get_json()
+
+        if 'productId' not in req_data:
+            return "productId is missing"
+        if 'productName' not in req_data:
+            return "productName is missing"
+        if 'productDescription' not in req_data:
+            return "productDescription is missing"
+        if 'productPrice' not in req_data:
+            return "productPrice is missing"
+        if 'productQuantity' not in req_data:
+            return "productQuantity is missing"
+
         mycol.insert_one(request.json)
         return "done"
+        
     if request.method == 'GET':
         js = dumps(mycol.find())
         resp = Response(js, status=200, mimetype='application/json')
