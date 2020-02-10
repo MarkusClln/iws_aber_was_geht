@@ -8,7 +8,7 @@ namespace Microservices.Webshop.Models
     public class Product
     {
         public Product() { }
-        public Product(int productId, string name, string description, int price, string quantity, int discount)
+        public Product(int productId, string name, string description, int price, int quantity, int discount, int picNum)
         {
             this.ProductId = productId;
             this.ProductName = name;
@@ -16,13 +16,15 @@ namespace Microservices.Webshop.Models
             this.ProductPrice = price;
             this.ProductQuantity = quantity;
             this.ProductDiscount = discount;
+            this.PicNum = picNum;
         }
 
         public int ProductId { get; set; }
         public string ProductName { get; set; }
         public string ProductDescription { get; set; }
         public int ProductPrice { get; set; }
-        public string ProductQuantity { get; set; }
+        public int ProductQuantity { get; set; }
         public int ProductDiscount { get; set; }
+        public int PicNum { get; set; }
     }
 }

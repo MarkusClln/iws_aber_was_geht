@@ -5,7 +5,6 @@ import os
 import json
 
 app = Flask(__name__)
-ma = Marshmallow(app)
 DB_IP = os.getenv('DB_IP')
 PORT = os.getenv('PORT')
 myclient = pymongo.MongoClient("mongodb://"+DB_IP+":27017/")

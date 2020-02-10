@@ -71,7 +71,8 @@ router.post('/checkout/:customerId', async function(req, res, next){
             });
 
         //Add value to fullPrice
-        fullPrice += ((product.productPrice - discount) * product.productCount);
+        var calc = ((product.productPrice - discount) * item.count);
+        fullPrice += calc;
     }
 
     //remove unneccessary field customerBasketId

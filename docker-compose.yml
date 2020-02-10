@@ -99,13 +99,6 @@ services:
       PAYMENT_IP: payment
       PRODUCT_IP: products
 
-  frontend:
-    build: frontend_working/Microservices.Webshop/Microservices.Webshop/.
-    networks:
-      - webshop-net
-    ports:
-      - "3006:80"
-
 volumes:
   postgres_data:
   mysql_data:

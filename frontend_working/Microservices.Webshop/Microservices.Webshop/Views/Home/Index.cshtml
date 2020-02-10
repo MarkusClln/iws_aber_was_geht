@@ -10,19 +10,31 @@
         <div class="container">
             <div class="row">
                 @{ 
-                    var picNum = 240;
+                    var picNum = 250;
                 }
                 @foreach (var item in Model)
                 {
+                    
                     @Html.Hidden(item.ProductName);
 
                     <div class="col-lg-3 col-md-6 mb-4" id="card-template">
-                        <a class="card" asp-controller="Home" asp-action="ProductDetail" asp-route-name="@item.ProductName" asp-route-description="@item.ProductDescription" asp-route-price="@item.ProductPrice" asp-route-productId="@item.ProductId">
+                        <a class="card" asp-controller="Home" asp-action="ProductDetail" asp-route-name="@item.ProductName" 
+                           asp-route-description="@item.ProductDescription" 
+                           asp-route-price="@item.ProductPrice" 
+                           asp-route-productId="@item.ProductId"
+                           asp-route-discount="@item.ProductDiscount"
+                           asp-route-quantity="@item.ProductQuantity"
+                           asp-route-picNum="@picNum">
                             <!--Card image-->
                             <div class="view overlay">
                                 @*<img src="~/sell-product.png" class="card-img-top"
         alt="">*@
-                                <img src="http://placekitten.com/400/256" />
+                                @{ 
+                                    picNum++;
+                                    var url = "http://placekitten.com/400/";
+                                    var newUrl = url + picNum;
+                                }
+                                <img src="@newUrl" />
                                 <a href="product-page.html">
                                     <div class="mask rgba-white-slight"></div>
                                 </a>
@@ -46,7 +58,9 @@
                                         <strong style="color:red;">- @item.ProductDiscount €</strong>
                                     </h4>
                                 }
-
+                                <h6 class="font-weight-bold blue-text">
+                                    <strong>Noch verfügbar: @item.ProductQuantity</strong>
+                                </h6>
                             </div>
                             <!--Card content-->
                         </a>

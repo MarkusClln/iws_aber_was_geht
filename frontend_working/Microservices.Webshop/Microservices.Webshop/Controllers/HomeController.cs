@@ -31,9 +31,9 @@ namespace Microservices.Webshop.Controllers
             return View(list);
         }
 
-        public IActionResult ProductDetail(string name, string description, int price, int productId)
+        public IActionResult ProductDetail(string name, string description, int price, int productId, int discount, int quantity, int picNum)
         {
-            return View(new Product(productId, name, description, price, "",0));
+            return View(new Product(productId, name, description, price, quantity, discount, picNum++));
         }
 
         public async Task<IActionResult> Basket()
